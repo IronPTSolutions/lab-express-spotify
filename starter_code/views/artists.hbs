@@ -3,13 +3,14 @@
     {{#each artists as |artist|}}
     <div class="col-lg-4 artist-container">
       {{#if artist.images.[0] }}
-      <img src="{{artist.images.[0].url}}" alt="" class="artist-img">
+      <img src="{{artist.images.[0]}}" alt="" class="artist-img">
       {{else}}
       <img src="http://www.designshock.com/wp-content/uploads/2016/04/man-4-400.jpg" alt="" class="artist-img">
       {{/if}}
       <div class="artist-info-container">
         <p>{{artist.name}}</p>
         <a href="/albums/{{artist.id}}">View Albums</a>
+        <a href="/artist/{{artist.id}}">View Detail</a>
       </div>
     </div>
     {{/each}}

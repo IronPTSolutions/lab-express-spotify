@@ -15,6 +15,7 @@
     "express": "^4.16.2",
     "express-ejs-layouts": "^2.3.1",
     "hbs": "^4.0.6",
+    "mongoose": "^5.9.20",
     "morgan": "^1.9.0",
     "prettyjson": "^1.2.1",
     "spotify-web-api-node": "^2.5.0"

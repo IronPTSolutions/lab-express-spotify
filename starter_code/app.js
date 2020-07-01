@@ -12,6 +12,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'hbs');
 
+/* Mongoose config */
+require('./config/db.config');
+const Artist = require('./models/Artist.model');
+
 /* Spotify API Client config */
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.CLIENT_ID,
@@ -27,7 +31,21 @@ spotifyApi.clientCredentialsGrant()
 
 /* App routes */
 app.get('/', (req, res) => {
-  res.render('index');
+  //res.render('index');
+  Artist.find({})
+    .then((artistsFromDb) => {
+      res.render('artists', { artists: artistsFromDb })
+    })
+    .catch(e => console.log('Error while finding artists', e));
+});
+
+app.get('/artist/:artistId', (req, res) => {
+  //res.render('index');
+  Artist.findById(req.params.artistId)
+    .then((artist) => {
+      res.render('artist', artist)
+    })
+    .catch(e => console.log('Error while finding artist', e));
 });
 
 app.get('/artists', (req, res) => {
@@ -63,4 +81,4 @@ app.get('/tracks/:albumId', (req, res, next) => {
     });
 });
 
-app.listen(3000);
+app.listen(3001);
