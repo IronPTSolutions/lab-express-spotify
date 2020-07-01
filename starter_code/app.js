@@ -81,4 +81,4 @@ app.get('/tracks/:albumId', (req, res, next) => {
     });
 });
 
-app.listen(3001);
+app.listen(3000);
