@@ -1,14 +1,21 @@
+require('dotenv').config();
 const SpotifyWebApi = require('spotify-web-api-node');
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
 
-/* Spotify API Client config */
+/* Middlewares config */
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: true }));
 
+app.set('views', __dirname + '/views');
+app.set('view engine', 'hbs');
+
+/* Spotify API Client config */
 const spotifyApi = new SpotifyWebApi({
-  clientId: '3531ef1cad0e43f5b041255aa9c38066',
-  clientSecret: '22ab1e554338461fac51a5a2d3756bd4'
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET
 });
 
 spotifyApi.clientCredentialsGrant()
@@ -18,23 +25,12 @@ spotifyApi.clientCredentialsGrant()
     console.log('Something went wrong when retrieving an access token', err);
   });
 
-/* Middlewares config */
-
-app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.set('views', __dirname + '/views');
-app.set('view engine', 'hbs');
-
 /* App routes */
-
 app.get('/', (req, res) => {
   res.render('index');
 });
 
 app.get('/artists', (req, res) => {
-  let artist = req.query.artist;
-
   spotifyApi.searchArtists(req.query.artist)
     .then(function (data) {
       res.render('artists', {
