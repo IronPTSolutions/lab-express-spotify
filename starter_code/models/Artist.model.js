@@ -7,7 +7,6 @@ const artistSchema = new mongoose.Schema(
 			required: true
 		},
 		image: String,
-		albums: [String],
 		artistType: {
 			type: String,
 			required: true,
@@ -18,7 +17,13 @@ const artistSchema = new mongoose.Schema(
 			enum: ['rock', 'pop', 'blues', 'jazz']
 		}
 	}
-)
+);
+
+artistSchema.virtual('albums', {
+	ref: 'Album',
+	localField: '_id',
+	foreignField: 'artist'
+});
 
 const Artist = mongoose.model('Artist', artistSchema); // artists
 
