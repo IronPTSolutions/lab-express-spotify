@@ -1,0 +1,26 @@
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<h1>Create a new artist</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<form action="/artist/{{#if id}}{{id}}/edit{{else}}create{{/if}}" method="post">
+				<input class="form-control" type="text" name="name" required placeholder="name"
+					{{#if id}}value="{{name}}" {{/if}} />
+				<select class="form-control" name="artistType" {{#if id}}value="{{artistType}}" {{/if}} required>
+					<option>band</option>
+					<option>singer</option>
+				</select>
+				<select class="form-control" name="genre" {{#if id}}value="{{genre}}"{{/if}} required>
+					<option>rock</option>
+					<option>pop</option>
+					<option>blues</option>
+					<option>jazz</option>
+				</select>
+				<button type="submit" class="btn btn-primary">{{#if id}}Edit{{else}}Create{{/if}} artist</button>
+			</form>
+		</div>
+	</div>
+</div>
