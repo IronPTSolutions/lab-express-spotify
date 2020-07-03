@@ -14,5 +14,7 @@ mongoose
 
 process
 	.on('SIGINT', () => {
-		mongoose.connection.close().then(() => console.log('Disconnected on SIGINT'));
+		mongoose.connection.close()
+			.then(() => console.log('Disconnected on SIGINT'))
+			.then(() => process.exit());
 	});
