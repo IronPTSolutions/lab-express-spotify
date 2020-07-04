@@ -1,5 +1,5 @@
 require('../config/db.config');
-
+const process = require('process');
 const Artist = require('../models/Artist.model');
 
 const artists = [
@@ -38,4 +38,5 @@ Artist.deleteMany({})
 	.then((artistsFromDb) => {
 		console.log('Inserted artists');
 	})
-	.catch((e) => console.log(e));
+	.catch((e) => console.log(e))
+	.finally(() => process.exit());
