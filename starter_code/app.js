@@ -39,6 +39,38 @@ app.get('/', (req, res) => {
     .catch(e => console.log('Error while finding artists', e));
 });
 
+app.get('/artist/create', (req, res) => {
+  res.render('artist-form');
+});
+
+app.post('/artist/create', (req, res) => {
+  const body = req.body;
+  body.albums = body.albums.split(',');
+  Artist.create(body)
+    .then((dbArtist) => {
+      console.log(dbArtist);
+      res.redirect('/');
+    })
+    .catch(e => console.error("AAAh", e));
+});
+
+app.get('/artist/:id/edit', (req, res) => {
+  Artist.findById(req.params.id)
+    .then((dbArtist) => res.render('artist-form', dbArtist))
+    .catch(e => console.log('Error while finding artist', e));
+});
+
+app.post('/artist/:id/edit', (req, res) => {
+  const body = req.body;
+  body.albums = body.albums.split(',');
+  Artist.findByIdAndUpdate(req.params.id, body)
+    .then((dbArtist) => {
+      console.log(dbArtist);
+      res.redirect('/');
+    })
+    .catch(e => console.error("AAAh", e));
+});
+
 app.get('/artist/:artistId', (req, res) => {
   //res.render('index');
   Artist.findById(req.params.artistId)

@@ -1,9 +1,14 @@
 <div class="container">
   <div class="row">
+    <div class="col">
+      <a href="/artist/create" class="btn btn-primary">Create Artist</a>
+    </div>
+  </div>
+  <div class="row">
     {{#each artists as |artist|}}
     <div class="col-lg-4 artist-container">
-      {{#if artist.images.[0] }}
-      <img src="{{artist.images.[0]}}" alt="" class="artist-img">
+      {{#if artist.image }}
+      <img src="{{artist.image}}" alt="" class="artist-img">
       {{else}}
       <img src="http://www.designshock.com/wp-content/uploads/2016/04/man-4-400.jpg" alt="" class="artist-img">
       {{/if}}
@@ -11,6 +16,7 @@
         <p>{{artist.name}}</p>
         <a href="/albums/{{artist.id}}">View Albums</a>
         <a href="/artist/{{artist.id}}">View Detail</a>
+        <a href="/artist/{{artist.id}}/edit">Edit</a>
       </div>
     </div>
     {{/each}}

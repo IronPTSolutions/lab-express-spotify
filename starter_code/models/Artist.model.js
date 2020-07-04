@@ -6,7 +6,7 @@ const artistSchema = new mongoose.Schema(
 			type: String,
 			required: true
 		},
-		images: [String],
+		image: String,
 		albums: [String],
 		artistType: {
 			type: String,

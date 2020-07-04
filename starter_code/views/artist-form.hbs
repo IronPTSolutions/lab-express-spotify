@@ -1,0 +1,19 @@
+<div id="form-wrapper">
+	<h1>{{#if id}}Edit{{else}}Create{{/if}} artist</h1>
+	<form action="/artist/{{#if id}}{{id}}/edit{{else}}create{{/if}}" method="post">
+		<input class="form-control" type="text" name="name" placeholder="name" {{#if id}}value="{{name}}"{{/if}}/>
+		<input class="form-control" type="text" name="image" placeholder="image" {{#if id}}value="{{image}}"{{/if}} />
+		<input class="form-control" type="text" name="albums" placeholder="albums" {{#if id}}value="{{albums}}"{{/if}} />
+		<select class="form-control" name="artistType" {{#if id}}value="{{artistType}}"{{/if}}>
+			<option>band</option>
+			<option>singer</option>
+		</select>
+		<select class="form-control" name="genre" {{#if id}}value="{{genre}}"{{/if}}>
+			<option>rock</option>
+			<option>pop</option>
+			<option>blues</option>
+			<option>jazz</option>
+		</select>
+		<button class="btn btn-primary" type="submit">{{#if id}}Edit{{else}}Create{{/if}} artist</button>
+	</form>
+</div>
