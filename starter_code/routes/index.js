@@ -1,8 +1,9 @@
 const Artist = require('../models/Artist.model');
+const Album = require('../models/Album.model');
+const Song = require('../models/Song.model');
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
-	//res.render('index');
 	Artist.find({})
 		.then((artistsFromDb) => {
 			res.render('artists', { artists: artistsFromDb })
@@ -18,11 +19,22 @@ router.post('/artist/create', (req, res) => {
 	const body = req.body;
 	body.albums = body.albums.split(',');
 	Artist.create(body)
-		.then((dbArtist) => {
-			console.log(dbArtist);
+		.then(() => {
 			res.redirect('/');
 		})
-		.catch(e => console.error("AAAh", e));
+		.catch(e => console.error("Error creating artist", e));
+});
+
+
+router.get('/artist/:id/albums', (req, res) => {
+	Album.find({ artist: req.params.id })
+		.populate('songs')
+		.populate('artist')
+		.then((dbAlbums) => {
+			res.render('albums', { albums: dbAlbums })
+		})
+		.catch(e => console.log('Error while finding artist\'s albums', e));
+
 });
 
 router.get('/artist/:id/edit', (req, res) => {
@@ -39,13 +51,15 @@ router.post('/artist/:id/edit', (req, res) => {
 			console.log(dbArtist);
 			res.redirect('/');
 		})
-		.catch(e => console.error("AAAh", e));
+		.catch(e => console.error("Error while editing artist", e));
 });
 
-router.get('/artist/:artistId', (req, res) => {
-	Artist.findById(req.params.artistId)
+router.get('/artist/:id', (req, res) => {
+	Artist.findById(req.params.id)
+		.populate('albums')
 		.then((artist) => {
-			res.render('artist', artist)
+			console.log(artist.albums);
+			res.render('artist', artist);
 		})
 		.catch(e => console.log('Error while finding artist', e));
 });

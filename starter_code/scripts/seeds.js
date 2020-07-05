@@ -1,42 +1,198 @@
 require('../config/db.config');
 const process = require('process');
+
 const Artist = require('../models/Artist.model');
+const Album = require('../models/Album.model');
+const Song = require('../models/Song.model');
+const mongoose = require('mongoose');
 
 const artists = [
 	{
 		name: 'Muse',
-		albums: ['Simulation Theory', 'Drones', 'The 2nd Law', 'The Resistance', 'Black Holes and Revelations'],
+		albums: [
+			{
+				name: 'Simulation Theory',
+				songs: [
+					{
+						name: "Algorithm",
+						artists: ['Queen'],
+						duration: "4:06"
+					},
+					{
+						name: 'The Dark Side',
+						artists: [],
+						duration: '3:47'
+					},
+				]
+			}, {
+				name: 'Drones',
+				songs: [
+					{
+						name: 'Dead Inside',
+						artists: [],
+						duration: '4:23'
+					},
+					{
+						name: 'Mercy',
+						artists: [],
+						duration: '3:52'
+					},
+				]
+			}],
 		artistType: 'band',
 		image: 'https://i.scdn.co/image/12450535621500d6e519275f2c52d49c00a0168f',
 		genre: 'rock'
 	},
 	{
 		name: 'The Beatles',
-		albums: ['Abbey Road', 'Live at the BBC', 'Let It Be', 'Yellow Submarine', 'The Beatles', 'Help!'],
+		albums: [
+			{
+				name: 'Abbey Road',
+				songs: [
+					{
+						name: 'Come Together',
+						artists: [],
+						duration: '4:19'
+					},
+					{
+						name: 'Here Comes the Sun',
+						artists: [],
+						duration: '3:06'
+					},
+				]
+			}, {
+				name: 'Let It Be',
+				songs: [
+					{
+						name: 'Across The Universe',
+						artists: [],
+						duration: '3:48'
+					},
+					{
+						name: 'Let It Be',
+						artists: [],
+						duration: '4:03'
+					},
+				]
+			}],
 		artistType: 'band',
 		image: 'https://i.scdn.co/image/6b2a709752ef9c7aaf0d270344157f6cd2e0f1a7',
 		genre: 'rock'
 	},
 	{
 		name: 'Queen',
-		albums: ['A Night at the Opera', 'Live at Wembley Stadium', 'Innuendo', 'A Kind of Magic', 'The Game'],
+		albums: [
+			{
+				name: 'A night at the Opera',
+				songs: [
+					{
+						name: 'Death on two legs',
+						artists: [],
+						duration: '3:44'
+					},
+					{
+						name: 'Bohemian Rhapsody',
+						artists: [],
+						duration: '5:54'
+					},
+				]
+			}, {
+				name: 'A Kind of Magic',
+				songs: [
+					{
+						name: 'One Vision',
+						artists: [],
+						duration: '5:11'
+					},
+					{
+						name: 'Who Wants to Live Forever',
+						artists: [],
+						duration: '5:15'
+					},
+				]
+			}],
 		artistType: 'band',
 		image: 'https://i.scdn.co/image/b040846ceba13c3e9c125d68389491094e7f2982',
 		genre: 'rock'
 	},
 	{
 		name: 'Ariana Grande',
-		albums: ['thank u, next', 'Sweetener', 'Dangerous Woman', 'My Everything', 'Yours Truly'],
+		albums: [
+			{
+				name: 'thank u, next',
+				songs: [
+					{
+						name: 'imagine',
+						artists: [],
+						duration: '3:32'
+					},
+					{
+						name: 'needy',
+						artists: [],
+						duration: '2:52'
+					},
+				]
+			}, {
+				name: 'Sweetener',
+				songs: [
+					{
+						name: 'raindrops (an angel cried)',
+						artists: [],
+						duration: '0:38'
+					},
+					{
+						name: 'blazed',
+						artists: [],
+						duration: '3:16'
+					},
+				]
+			}],
 		image: 'https://i.scdn.co/image/b1dfbe843b0b9f54ab2e588f33e7637d2dab065a',
 		artistType: 'singer',
 		genre: 'pop'
 	}
 ];
 
-Artist.deleteMany({})
-	.then(() => Artist.insertMany(artists))
-	.then((artistsFromDb) => {
-		console.log('Inserted artists');
+mongoose.connection.dropDatabase()
+	.then(() => Artist.insertMany(artists.map(artist => ({ ...artist, albums: undefined }))))
+	.then((dbArtists) => {
+		// Get all albums from seed into an array, add the artist id and remove songs (they will be [ObjectId])
+		// Flatmap is like a map, but the map function returns an array for each element of the original array, 
+		// and flatmap then "flattens" that [[],[]] into [,,]
+		const albums = dbArtists.flatMap(
+			(dbArtist) =>
+				artists
+					.find(artist => artist.name === dbArtist.name)
+					.albums.map(album => ({ ...album, artist: dbArtist.id, songs: undefined }))
+		);
+		return Album.insertMany(albums);
 	})
-	.catch((e) => console.log(e))
+	.then((dbAlbums) => {
+		return Song.insertMany(
+			// Get all songs for all albums into one array
+			dbAlbums.flatMap(dbAlbum => {
+				// Get the current album from seed
+				const album = artists
+					.flatMap(artist => artist.albums)
+					.find(album => album.name === dbAlbum.name);
+				// Add the albumId and the artists' ids to all songs
+				return album.songs.map(song => ({
+					...song,
+					album: dbAlbum.id,
+					artists: [
+						...song.artists.map(
+							songArtist =>
+								// We need the artists' id, but we have the name and we don't have dbArtists. 
+								// Find an artist that has the current album's name in its album array, get its first dbAlbum and use that id for 
+								// collaborators
+								dbAlbums.find(dbAlbum => artists.find(artist => artist.name === songArtist).albums[0].name === dbAlbum.name).artist
+						),
+						dbAlbum.artist
+					]
+				}))
+			})
+		)
+	})
+	.then(() => console.log('Done!'))
+	.catch((e) => console.error('Error seeding', e))
 	.finally(() => process.exit());

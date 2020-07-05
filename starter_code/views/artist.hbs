@@ -1,5 +1,9 @@
 <h1>Artist: {{name}}</h1>
-<p>{{albums}}</p>
+<p>
+	{{#each albums as |album|}}
+	{{album.name}},
+	{{/each}}
+</p>
 <p>Type: {{artistType}}</p>
 <p>Genre: {{genre}}</p>
 <img src="{{images.[0]}}" />
