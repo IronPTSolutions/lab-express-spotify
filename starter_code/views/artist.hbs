@@ -1,9 +1,23 @@
-<h1>Artist: {{name}}</h1>
-<p>
-	{{#each albums as |album|}}
-	{{album.name}},
-	{{/each}}
-</p>
-<p>Type: {{artistType}}</p>
-<p>Genre: {{genre}}</p>
-<img src="{{images.[0]}}" />
+<div class="container">
+	<div class="row text-center">
+		<div class="col">
+		<h1>Artist: {{name}}</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<img src="{{image}}" class="album-img" />
+		</div>
+		<div class="col-6">
+			<p>Albums:
+			<ul>
+				{{#each albums as |album|}}
+				<li>{{album.name}}</li>
+				{{/each}}
+			</ul>
+			</p>
+			<p>Type: {{artistType}}</p>
+			<p>Genre: {{genre}}</p>
+		</div>
+	</div>
+</div>

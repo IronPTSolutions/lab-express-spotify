@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Song = require('./Song.model');
+require('./Song.model');
 const albumSchema = new mongoose.Schema(
 	{
 		name: {
@@ -9,6 +9,10 @@ const albumSchema = new mongoose.Schema(
 		artist: {
 			type: mongoose.SchemaTypes.ObjectId,
 			ref: 'Artist'
+		},
+		image: {
+			type: String,
+			default: 'https://www.nierle.com/pic/2161b.jpg'
 		}
 	}
 );

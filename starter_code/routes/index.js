@@ -1,6 +1,6 @@
 const Artist = require('../models/Artist.model');
 const Album = require('../models/Album.model');
-const Song = require('../models/Song.model');
+require('../models/Song.model');
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
@@ -34,7 +34,6 @@ router.get('/artist/:id/albums', (req, res) => {
 			res.render('albums', { albums: dbAlbums })
 		})
 		.catch(e => console.log('Error while finding artist\'s albums', e));
-
 });
 
 router.get('/artist/:id/edit', (req, res) => {

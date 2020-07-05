@@ -2,11 +2,12 @@
   <div class="row">
     {{#each albums as |album| }}
     <div class="col-lg-4 artist-container">
+      <img src="{{album.image}}" alt="" class="artist-img">
       <div class="artist-info-container">
         <p>{{album.name}}</p>
         <p>{{album.artist.name}}</p>
-        {{#each songs as |song|}}
-          {{song.name}}
+        {{#each album.songs as |song|}}
+        {{song.name}}
         {{/each}}
       </div>
     </div>

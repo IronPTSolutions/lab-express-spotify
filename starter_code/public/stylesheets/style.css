@@ -131,3 +131,7 @@ body {
   color: #F6F6F6;
   font-size: 20px;
 }
+
+.album-img {
+  width: 30vw;
+}
